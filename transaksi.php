@@ -146,32 +146,41 @@
                         </div>
                         <div class="card-body">
                             <!-- Form tidak memiliki atribut 'action' atau 'method' karena akan ditangani oleh backend -->
-                            <form>
+                            <?php
+                            $koneksi = new mysqli("localhost", "root", "", "bonus_evaluation_db");
+
+                            $queryMontir = $koneksi->query("SELECT id, nama FROM montir");
+                            ?>
+
+                            <form action="controller/transaksi/proses_simpan.php" method="POST">
                                 <div class="form-group mb-3">
                                     <label for="idKaryawan">ID Karyawan</label>
-                                    <select class="form-control" id="idKaryawan">
-                                        <option selected>Pilih ID Karyawan...</option>
-                                        <option value="1">Joel</option>
-                                        <option value="2">Khalis</option>
-                                        <option value="3">Yusuf</option>
+                                    <select class="form-control" id="idKaryawan" name="montir_id" required>
+                                        <option value="" disabled selected>Pilih ID Karyawan...</option>
+                                        <?php while ($montir = $queryMontir->fetch_assoc()): ?>
+                                            <option value="<?= $montir['id'] ?>"><?= htmlspecialchars($montir['nama']) ?></option>
+                                        <?php endwhile; ?>
                                     </select>
                                 </div>
+
                                 <div class="form-group mb-3">
                                     <label for="nominalTransaksi">Nominal Transaksi</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Rp</span>
                                         </div>
-                                        <input type="number" class="form-control" id="nominalTransaksi"
-                                            placeholder="Contoh: 150000">
+                                        <input type="number" class="form-control" id="nominalTransaksi" name="pemasukan" required placeholder="Contoh: 150000">
                                     </div>
                                 </div>
+
                                 <div class="form-group mb-4">
                                     <label for="tanggalTransaksi">Tanggal Transaksi</label>
-                                    <input type="date" class="form-control" id="tanggalTransaksi">
+                                    <input type="date" class="form-control" id="tanggalTransaksi" name="tanggal" required>
                                 </div>
+
                                 <button type="submit" class="btn btn-primary">Simpan Transaksi</button>
                             </form>
+
                         </div>
                     </div>
 
