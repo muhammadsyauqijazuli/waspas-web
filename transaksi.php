@@ -1,3 +1,11 @@
+<?php
+include 'controller/transaksi/index.php';
+?>
+<?php
+$koneksi = new mysqli("localhost", "root", "", "bonus_evaluation_db");
+$queryMontir = $koneksi->query("SELECT id, nama FROM montir");
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -146,12 +154,6 @@
                         </div>
                         <div class="card-body">
                             <!-- Form tidak memiliki atribut 'action' atau 'method' karena akan ditangani oleh backend -->
-                            <?php
-                            $koneksi = new mysqli("localhost", "root", "", "bonus_evaluation_db");
-
-                            $queryMontir = $koneksi->query("SELECT id, nama FROM montir");
-                            ?>
-
                             <form action="controller/transaksi/proses_simpan.php" method="POST">
                                 <div class="form-group mb-3">
                                     <label for="idKaryawan">ID Karyawan</label>
@@ -201,19 +203,30 @@
                                     </thead>
                                     <!-- Anda bisa menambahkan <tbody> di sini untuk isi tabel -->
                                     <tbody>
-                                        <!-- Contoh baris data -->
-                                        <tr>
-                                            <td>TRX001</td>
-                                            <td>Rp 150.000</td>
-                                            <td>2023-10-27</td>
-                                        </tr>
-                                        <tr>
-                                            <td>TRX002</td>
-                                            <td>Rp 250.000</td>
-                                            <td>2023-10-28</td>
-                                        </tr>
+                                        <?php if (!empty($transaksi)): ?>
+                                            <?php foreach ($transaksi as $row): ?>
+                                                <tr>
+                                                    <td><?= htmlspecialchars($row['id']) ?></td>
+                                                    <td>Rp <?= number_format($row['pemasukan'], 0, ',', '.') ?></td>
+                                                    <td><?= htmlspecialchars($row['tanggal']) ?></td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <tr>
+                                                <td colspan="3" class="text-center">Data tidak ditemukan.</td>
+                                            </tr>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
+                                <nav>
+                                    <ul class="pagination justify-content-center">
+                                        <?php for ($i = 1; $i <= $total_halaman; $i++): ?>
+                                            <li class="page-item <?= ($i == $halaman) ? 'active' : '' ?>">
+                                                <a class="page-link" href="?halaman=<?= $i ?>"><?= $i ?></a>
+                                            </li>
+                                        <?php endfor; ?>
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>
