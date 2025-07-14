@@ -1,3 +1,10 @@
+<?php
+require_once 'model/transaksi_model.php';
+
+$total_pemasukan = getTotalPemasukan($koneksi);
+$data_bulanan = getPemasukanBulanan($koneksi);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -153,7 +160,7 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                 Earnings (Monthly)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">Rp<?= number_format($total_pemasukan, 0, ',', '.') ?></div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -298,6 +305,14 @@
     <script src="vendor/chart.js/Chart.min.js"></script>
 
     <!-- Page level custom scripts -->
+    <script>
+        const phpLabels = <?= json_encode(array_map(function ($row) {
+                                $bulan = [1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr', 5 => 'Mei', 6 => 'Jun', 7 => 'Jul', 8 => 'Agu', 9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des'];
+                                return $bulan[(int)$row['bulan']];
+                            }, $data_bulanan)); ?>;
+
+        const phpData = <?= json_encode(array_column($data_bulanan, 'total_bulanan')); ?>;
+    </script>
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
 
