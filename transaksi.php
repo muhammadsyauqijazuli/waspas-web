@@ -1,4 +1,5 @@
 <?php
+include 'controller/auth.php';
 include 'controller/transaksi/index.php';
 ?>
 <?php
@@ -129,7 +130,7 @@ $queryMontir = $koneksi->query("SELECT id, nama FROM montir");
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                <a class="dropdown-item" href="controller/transaksi/logout.php" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
@@ -160,7 +161,8 @@ $queryMontir = $koneksi->query("SELECT id, nama FROM montir");
                                     <select class="form-control" id="idKaryawan" name="montir_id" required>
                                         <option value="" disabled selected>Pilih ID Karyawan...</option>
                                         <?php while ($montir = $queryMontir->fetch_assoc()): ?>
-                                            <option value="<?= $montir['id'] ?>"><?= htmlspecialchars($montir['nama']) ?></option>
+                                            <option value="<?= $montir['id'] ?>"><?= htmlspecialchars($montir['nama']) ?>
+                                            </option>
                                         <?php endwhile; ?>
                                     </select>
                                 </div>
@@ -171,13 +173,15 @@ $queryMontir = $koneksi->query("SELECT id, nama FROM montir");
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Rp</span>
                                         </div>
-                                        <input type="number" class="form-control" id="nominalTransaksi" name="pemasukan" required placeholder="Contoh: 150000">
+                                        <input type="number" class="form-control" id="nominalTransaksi" name="pemasukan"
+                                            required placeholder="Contoh: 150000">
                                     </div>
                                 </div>
 
                                 <div class="form-group mb-4">
                                     <label for="tanggalTransaksi">Tanggal Transaksi</label>
-                                    <input type="date" class="form-control" id="tanggalTransaksi" name="tanggal" required>
+                                    <input type="date" class="form-control" id="tanggalTransaksi" name="tanggal"
+                                        required>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary">Simpan Transaksi</button>
@@ -186,7 +190,7 @@ $queryMontir = $koneksi->query("SELECT id, nama FROM montir");
                         </div>
                     </div>
 
-                    <!-- Tabel untuk Menampilkan Data Transaksi -->
+                    <!--Tabel-->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">Data Transaksi</h6>
@@ -196,24 +200,35 @@ $queryMontir = $koneksi->query("SELECT id, nama FROM montir");
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
+                                            <th>Nomor</th>
                                             <th>Nominal Transaksi</th>
                                             <th>Tanggal Transaksi</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
-                                    <!-- Anda bisa menambahkan <tbody> di sini untuk isi tabel -->
                                     <tbody>
                                         <?php if (!empty($transaksi)): ?>
+                                            <?php
+                                            // Inisialisasi nomor urut berdasarkan halaman dan offset
+                                            $nomor = $offset + 1;
+                                            ?>
                                             <?php foreach ($transaksi as $row): ?>
                                                 <tr>
-                                                    <td><?= htmlspecialchars($row['id']) ?></td>
+                                                    <td><?= $nomor++ ?></td>
                                                     <td>Rp <?= number_format($row['pemasukan'], 0, ',', '.') ?></td>
                                                     <td><?= htmlspecialchars($row['tanggal']) ?></td>
+                                                    <td>
+                                                        <a href="controller\transaksi\hapus_data.php?id=<?= $row['id'] ?>"
+                                                            class="btn btn-danger btn-sm"
+                                                            onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                                            Hapus
+                                                        </a>
+                                                    </td>
                                                 </tr>
                                             <?php endforeach; ?>
                                         <?php else: ?>
                                             <tr>
-                                                <td colspan="3" class="text-center">Data tidak ditemukan.</td>
+                                                <td colspan="4" class="text-center">Data tidak ditemukan.</td>
                                             </tr>
                                         <?php endif; ?>
                                     </tbody>
@@ -294,6 +309,7 @@ $queryMontir = $koneksi->query("SELECT id, nama FROM montir");
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
+
 
 </body>
 
