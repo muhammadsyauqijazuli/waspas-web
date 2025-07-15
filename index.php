@@ -2,6 +2,7 @@
 include 'controller/auth.php';
 require_once __DIR__ . '/model/transaksi_model.php';
 
+$koneksi = getKoneksi();
 $total_pemasukan = getTotalPemasukan($koneksi);
 $data_bulanan = getPemasukanBulanan($koneksi);
 ?>
