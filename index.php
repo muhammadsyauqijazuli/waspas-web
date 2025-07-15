@@ -42,30 +42,19 @@ $data_bulanan = getPemasukanBulanan($koneksi);
             </a>
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
-                <a class="nav-link" href="index.php">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span></a>
-            </li>
-
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="input-data.php">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Input Data</span></a>
-            </li>
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="transaksi.php">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Transaksi</span></a>
-            </li>
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="charts.php">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Analisis Report</span></a>
-            </li>
+            <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+                <li class="nav-item active"><a class="nav-link" href="index.php"><i
+                            class="fas fa-fw fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="input-data.php"><i
+                            class="fas fa-fw fa-edit"></i><span>Input Data</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="transaksi.php"><i
+                            class="fas fa-fw fa-exchange-alt"></i><span>Transaksi</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="charts.php"><i
+                            class="fas fa-fw fa-chart-area"></i><span>Analisis Report</span></a></li>
+                <hr class="sidebar-divider d-none d-md-block">
+                <div class="text-center d-none d-md-inline"><button class="rounded-circle border-0"
+                        id="sidebarToggle"></button></div>
+            </ul>
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -129,7 +118,8 @@ $data_bulanan = getPemasukanBulanan($koneksi);
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="controller/transaksi/logout.php" data-toggle="modal" data-target="#logoutModal">
+                                <a class="dropdown-item" href="controller/transaksi/logout.php" data-toggle="modal"
+                                    data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
@@ -161,7 +151,8 @@ $data_bulanan = getPemasukanBulanan($koneksi);
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                 Earnings (Monthly)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">Rp<?= number_format($total_pemasukan, 0, ',', '.') ?></div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                Rp<?= number_format($total_pemasukan, 0, ',', '.') ?></div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -308,9 +299,9 @@ $data_bulanan = getPemasukanBulanan($koneksi);
     <!-- Page level custom scripts -->
     <script>
         const phpLabels = <?= json_encode(array_map(function ($row) {
-                                $bulan = [1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr', 5 => 'Mei', 6 => 'Jun', 7 => 'Jul', 8 => 'Agu', 9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des'];
-                                return $bulan[(int)$row['bulan']];
-                            }, $data_bulanan)); ?>;
+            $bulan = [1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr', 5 => 'Mei', 6 => 'Jun', 7 => 'Jul', 8 => 'Agu', 9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des'];
+            return $bulan[(int) $row['bulan']];
+        }, $data_bulanan)); ?>;
 
         const phpData = <?= json_encode(array_column($data_bulanan, 'total_bulanan')); ?>;
     </script>

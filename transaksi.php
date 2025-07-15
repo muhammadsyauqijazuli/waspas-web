@@ -43,30 +43,19 @@ $queryMontir = $koneksi->query("SELECT id, nama FROM montir");
             </a>
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
-                <a class="nav-link" href="index.php">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span></a>
-            </li>
-
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="input-data.php">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Input Data</span></a>
-            </li>
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="transaksi.php">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Transaksi</span></a>
-            </li>
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="charts.php">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Analisis Report</span></a>
-            </li>
+            <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+                <li class="nav-item"><a class="nav-link" href="index.php"><i
+                            class="fas fa-fw fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="input-data.php"><i
+                            class="fas fa-fw fa-edit"></i><span>Input Data</span></a></li>
+                <li class="nav-item active"><a class="nav-link" href="transaksi.php"><i
+                            class="fas fa-fw fa-exchange-alt"></i><span>Transaksi</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="charts.php"><i
+                            class="fas fa-fw fa-chart-area"></i><span>Analisis Report</span></a></li>
+                <hr class="sidebar-divider d-none d-md-block">
+                <div class="text-center d-none d-md-inline"><button class="rounded-circle border-0"
+                        id="sidebarToggle"></button></div>
+            </ul>
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -130,7 +119,8 @@ $queryMontir = $koneksi->query("SELECT id, nama FROM montir");
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="controller/transaksi/logout.php" data-toggle="modal" data-target="#logoutModal">
+                                <a class="dropdown-item" href="controller/transaksi/logout.php" data-toggle="modal"
+                                    data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
@@ -218,7 +208,11 @@ $queryMontir = $koneksi->query("SELECT id, nama FROM montir");
                                                     <td>Rp <?= number_format($row['pemasukan'], 0, ',', '.') ?></td>
                                                     <td><?= htmlspecialchars($row['tanggal']) ?></td>
                                                     <td>
-                                                        <a href="controller\transaksi\hapus_data.php?id=<?= $row['id'] ?>"
+                                                        <a href="edit_transaksi.php?id=<?= $row['id'] ?>"
+                                                            class="btn btn-warning btn-sm">
+                                                            Edit
+                                                        </a>
+                                                        <a href="controller/transaksi/hapus_data.php?id=<?= $row['id'] ?>"
                                                             class="btn btn-danger btn-sm"
                                                             onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                                             Hapus
