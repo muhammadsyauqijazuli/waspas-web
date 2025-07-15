@@ -1,7 +1,7 @@
 <?php
 // controller/report_controller.php
 header('Content-Type: application/json');
-require_once __DIR__ . '/../db_koneksi.php';  // sesuaikan path koneksi
+require_once __DIR__ . '/waspas-web/db_koneksi.php';  // sesuaikan path koneksi
 
 try {
     $db = getConnection(); // fungsi dari db_koneksi.php
