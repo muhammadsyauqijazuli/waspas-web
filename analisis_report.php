@@ -2,6 +2,7 @@
 include 'controller/auth.php';
 require_once __DIR__ . '/model/transaksi_model.php';
 
+$koneksi = getKoneksi();
 $total_pemasukan = getTotalPemasukan($koneksi);
 $data_bulanan = getPemasukanBulanan($koneksi);
 ?>
@@ -207,9 +208,6 @@ $data_bulanan = getPemasukanBulanan($koneksi);
 
                     <!-- EXPORT & PRINT -->
                     <footer class="d-flex justify-content-end gap-2 mb-5">
-                        <button id="export-excel" class="btn btn-outline-secondary">Export Excel</button>
-                        <button id="export-pdf" class="btn btn-outline-secondary">Export PDF</button>
-                        <button class="btn btn-primary" onclick="window.print()">Print</button>
                     </footer>
 
                 </main>
