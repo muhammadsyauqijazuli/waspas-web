@@ -50,7 +50,7 @@ $data_bulanan = getPemasukanBulanan($koneksi);
                             class="fas fa-fw fa-edit"></i><span>Input Data</span></a></li>
                 <li class="nav-item"><a class="nav-link" href="transaksi.php"><i
                             class="fas fa-fw fa-exchange-alt"></i><span>Transaksi</span></a></li>
-                <li class="nav-item active"><a class="nav-link" href="charts.php"><i
+                <li class="nav-item active"><a class="nav-link" href="analisis_report.php"><i
                             class="fas fa-fw fa-chart-area"></i><span>Analisis Report</span></a></li>
                 <hr class="sidebar-divider d-none d-md-block">
                 <div class="text-center d-none d-md-inline"><button class="rounded-circle border-0"
@@ -138,12 +138,12 @@ $data_bulanan = getPemasukanBulanan($koneksi);
                     <div class="container d-flex flex-wrap align-items-center justify-content-between">
                         <h2 class="mb-2 mb-md-0">Analisis Report Bonus Montir</h2>
                         <form id="filter-form" class="d-flex flex-wrap align-items-center gap-2">
-                            <input type="date" name="from" class="form-control" placeholder="Dari" />
-                            <input type="date" name="to" class="form-control" placeholder="Sampai" />
+                            <input type="date" name="from" class="form-control m-2" placeholder="Dari" />
+                            <input type="date" name="to" class="form-control m-2" placeholder="Sampai" />
                             <select name="montir" class="form-select">
                                 <option value="">-- Semua Montir --</option>
                             </select>
-                            <button type="submit" class="btn btn-primary">Terapkan</button>
+                            <button type="submit" class="btn btn-primary m-2">Terapkan</button>
                         </form>
                     </div>
                 </header>

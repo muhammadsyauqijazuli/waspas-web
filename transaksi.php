@@ -50,7 +50,7 @@ $queryMontir = $koneksi->query("SELECT id, nama FROM montir");
                             class="fas fa-fw fa-edit"></i><span>Input Data</span></a></li>
                 <li class="nav-item active"><a class="nav-link" href="transaksi.php"><i
                             class="fas fa-fw fa-exchange-alt"></i><span>Transaksi</span></a></li>
-                <li class="nav-item"><a class="nav-link" href="charts.php"><i
+                <li class="nav-item"><a class="nav-link" href="analisis_report.php"><i
                             class="fas fa-fw fa-chart-area"></i><span>Analisis Report</span></a></li>
                 <hr class="sidebar-divider d-none d-md-block">
                 <div class="text-center d-none d-md-inline"><button class="rounded-circle border-0"
