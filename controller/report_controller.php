@@ -53,53 +53,114 @@ if ($action === 'report') {
         $montirs[] = $row;
     }
 
-    // Perhitungan WASPAS & Hybrid
-    $bW = ['omset_pemasukan'=>0.40,'kecepatan'=>0.25,'kedisiplinan'=>0.20,'kepuasan'=>0.15];
-    $bA = ['omset_pemasukan'=>0.35,'kecepatan'=>0.25,'kedisiplinan'=>0.25,'kepuasan'=>0.15];
+    // ==================================================================
+    // == BLOK PERHITUNGAN (WSM + WPM) UNTUK WASPAS & HYBRID AHP‑WASPAS ==
+    // ==================================================================
+
+    // 1. Kumpulkan semua nilai untuk normalisasi
+    $all_kecepatan    = array_column($montirs, 'kecepatan');
+    $all_kedisiplinan = array_column($montirs, 'kedisiplinan');
+    $all_kepuasan     = array_column($montirs, 'kepuasan');
+
+    $max_omset    = max(array_values($omsets));
+    $max_kepuasan = max($all_kepuasan);
+
+    $min_kecepatan    = min($all_kecepatan);
+    $min_kedisiplinan = min($all_kedisiplinan);
+
+    // 2. Bobot WASPAS awal (WSM + WPM)
+    $bW = [
+        'omset_pemasukan' => 0.40,
+        'kecepatan'       => 0.25,
+        'kedisiplinan'    => 0.20,
+        'kepuasan'        => 0.15
+    ];
+    // 3. Parameter lambda
     $lambda = 0.5;
-    $maxOm = max($omsets);
+
+    // 4. Siapkan perbandingan berpasangan AHP (urutan: omset, kecepatan, kedisiplinan, kepuasan)
+    $P = [
+        [1,   2,   2,   3],
+        [1/2, 1, 1/1.25, 2],
+        [1/2, 1.25, 1,   3],
+        [1/3, 1/2, 1/3, 1]
+    ];
+    $criteria_keys = ['omset_pemasukan','kecepatan','kedisiplinan','kepuasan'];
+
+    // 5. Hitung bobot AHP dengan metode geometric mean
+    $gm = [];
+    foreach ($P as $i => $row) {
+        $prod = 1.0;
+        foreach ($row as $val) {
+            $prod *= $val;
+        }
+        // nth root, n = jumlah kriteria = 4
+        $gm[$i] = pow($prod, 1/count($row));
+    }
+    $sum_gm = array_sum($gm);
+    $bA = [];
+    foreach ($gm as $i => $val) {
+        $bA[$criteria_keys[$i]] = $val / $sum_gm;
+    }
 
     $details = [];
     foreach ($montirs as $m) {
         $o = $omsets[$m['id']];
-        $n_om = $o / $maxOm;
-        $n_k  = $m['kecepatan']    / 5;
-        $n_d  = $m['kedisiplinan'] / 5;
-        $n_p  = $m['kepuasan']     / 5;
 
-        $sum  = $bW['omset_pemasukan']*$n_om
-              + $bW['kecepatan']*$n_k
-              + $bW['kedisiplinan']*$n_d
-              + $bW['kepuasan']*$n_p;
-        $prod = pow($n_om, $bW['omset_pemasukan'])
-              * pow($n_k,   $bW['kecepatan'])
-              * pow($n_d,   $bW['kedisiplinan'])
-              * pow($n_p,   $bW['kepuasan']);
-        $skW = $lambda*$sum + (1-$lambda)*$prod;
+        // --- Normalisasi ---
+        $n_om = $max_omset > 0 ? ($o / $max_omset) : 0;
+        $n_p  = $max_kepuasan > 0 ? ($m['kepuasan'] / $max_kepuasan) : 0;
+        $n_k  = $m['kecepatan'] > 0 ? ($min_kecepatan / $m['kecepatan']) : 0;
+        $n_d  = $m['kedisiplinan'] > 0 ? ($min_kedisiplinan / $m['kedisiplinan']) : 0;
 
-        $skH = $bA['omset_pemasukan']*$n_om
-             + $bA['kecepatan']*$n_k
-             + $bA['kedisiplinan']*$n_d
-             + $bA['kepuasan']*$n_p;
+        // --- WASPAS ---
+        $sumW = $bW['omset_pemasukan'] * $n_om
+              + $bW['kecepatan']       * $n_k
+              + $bW['kedisiplinan']    * $n_d
+              + $bW['kepuasan']        * $n_p;
+        $prodW = pow($n_om, $bW['omset_pemasukan'])
+               * pow($n_k,  $bW['kecepatan'])
+               * pow($n_d,  $bW['kedisiplinan'])
+               * pow($n_p,  $bW['kepuasan']);
+        $skW = $lambda * $sumW + (1 - $lambda) * $prodW;
+
+        // --- HYBRID AHP‑WASPAS ---
+        $sumA = $bA['omset_pemasukan'] * $n_om
+              + $bA['kecepatan']       * $n_k
+              + $bA['kedisiplinan']    * $n_d
+              + $bA['kepuasan']        * $n_p;
+        $prodA = pow($n_om, $bA['omset_pemasukan'])
+               * pow($n_k,  $bA['kecepatan'])
+               * pow($n_d,  $bA['kedisiplinan'])
+               * pow($n_p,  $bA['kepuasan']);
+        $skH = $lambda * $sumA + (1 - $lambda) * $prodA;
 
         $details[] = [
-            'id'=>$m['id'],'nama'=>$m['nama'],
-            'omset'=>$o,
-            'kecepatan'=>$m['kecepatan'],
-            'kedisiplinan'=>$m['kedisiplinan'],
-            'kepuasan'=>$m['kepuasan'],
-            'skorWaspas'=>$skW,
-            'skorHybrid'=>$skH
+            'id'           => $m['id'],
+            'nama'         => $m['nama'],
+            'omset'        => $o,
+            'kecepatan'    => $m['kecepatan'],
+            'kedisiplinan' => $m['kedisiplinan'],
+            'kepuasan'     => $m['kepuasan'],
+            'skorWaspas'   => $skW,
+            'skorHybrid'   => $skH
         ];
     }
+    // ==================================================================
+    // == AKHIR PERHITUNGAN ==
+    // ==================================================================
 
     // Ranking
-    $ws = array_column($details,'skorWaspas','id');
+    $ws = array_column($details, 'skorWaspas', 'id');
     arsort($ws);
-    $hs = array_column($details,'skorHybrid','id');
+    $hs = array_column($details, 'skorHybrid', 'id');
     arsort($hs);
     $rankW = array_flip(array_keys($ws));
     $rankH = array_flip(array_keys($hs));
+
+    usort($details, function($a, $b) {
+        return $b['skorWaspas'] <=> $a['skorWaspas'];
+    });
 
     foreach ($details as &$d) {
         $d['rankWaspas'] = $rankW[$d['id']] + 1;
@@ -111,31 +172,29 @@ if ($action === 'report') {
     }
     unset($d);
 
-    // Average
-    $avgOm    = array_sum($omsets)/count($omsets);
-    $avgWasp  = array_sum($ws)/count($ws);
-    $avgHyb   = array_sum($hs)/count($hs);
+    // Averages
+    $avgOm  = array_sum($omsets) / count($omsets);
+    $avgW   = array_sum($ws)     / count($ws);
+    $avgH   = array_sum($hs)     / count($hs);
 
     // Insight
-    $best = reset($details);
-    foreach ($details as $d) {
-        if ($d['skorWaspas'] > $best['skorWaspas']) $best = $d;
-    }
-    $ins = ["Top performer: {$best['nama']} ({$best['skorHybrid']})"];
+    $best = $details[0];
+    $ins  = ["Top performer: {$best['nama']} (skor {$best['skorWaspas']})"];
 
+    // Output JSON
     echo json_encode([
-        'labels' => array_column($details, 'nama'),
-        'skorWaspas' => array_values($ws),
-        'skorHybrid' => array_values($hs),
-        'details' => $details,
-        'avgOmset' => $avgOm,
-        'avgWaspas' => $avgWasp,
-        'avgHybrid' => $avgHyb,
-        'insights' => $ins
+        'labels'     => array_column($details, 'nama'),
+        'skorWaspas' => array_column($details, 'skorWaspas'),
+        'skorHybrid' => array_column($details, 'skorHybrid'),
+        'details'    => $details,
+        'avgOmset'   => $avgOm,
+        'avgWaspas'  => $avgW,
+        'avgHybrid'  => $avgH,
+        'insights'   => $ins
     ], JSON_PRETTY_PRINT);
     exit;
 }
 
 http_response_code(400);
 echo json_encode(['error' => 'Invalid action']);
-
+?>
